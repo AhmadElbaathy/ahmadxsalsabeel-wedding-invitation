@@ -118,45 +118,63 @@ export default function Home() {
 
       {/* Curtain — always rendered, plays at stage 1 */}
       <CurtainAnimation isOpen={stage === 1} onComplete={handleCurtainComplete}>
-        <div className="flex flex-col items-center gap-2 px-8 overflow-visible">
-          <h1
-            className="text-center text-shimmer"
-            style={{
-              fontFamily: 'var(--font-script)',
-              fontSize: 'clamp(30px, 10vw, 44px)',
-              lineHeight: 1.45,
-              display: 'block',
-              overflow: 'visible',
-              paddingTop: '0.05em',
-              paddingBottom: '0.12em',
-              paddingLeft: '0.05em',
-              paddingRight: '0.22em',
-              filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
-            }}
-          >
-            Ahmad
-          </h1>
-          <div className="my-2">
-            <span className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: 'clamp(22px, 8vw, 30px)' }}>&amp;</span>
+        <>
+          <div className="flex flex-col items-center gap-2 px-8 overflow-visible">
+            <h1
+              className="text-center text-shimmer"
+              style={{
+                fontFamily: 'var(--font-script)',
+                fontSize: 'clamp(30px, 10vw, 44px)',
+                lineHeight: 1.45,
+                display: 'block',
+                overflow: 'visible',
+                paddingTop: '0.05em',
+                paddingBottom: '0.12em',
+                paddingLeft: '0.05em',
+                paddingRight: '0.22em',
+                filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
+              }}
+            >
+              Ahmad
+            </h1>
+            <div className="my-2">
+              <span className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: 'clamp(22px, 8vw, 30px)' }}>&amp;</span>
+            </div>
+            <h1
+              className="text-center text-shimmer"
+              style={{
+                fontFamily: 'var(--font-script)',
+                fontSize: 'clamp(26px, 8.8vw, 40px)',
+                lineHeight: 1.45,
+                display: 'block',
+                overflow: 'visible',
+                paddingTop: '0.05em',
+                paddingBottom: '0.10em',
+                paddingLeft: '0.05em',
+                paddingRight: '0.14em',
+                filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
+              }}
+            >
+              Salsabeel
+            </h1>
           </div>
-          <h1
-            className="text-center text-shimmer"
+          <a
+            href="https://wa.me/201501613143?text=Hi%20Ahmad%2C%20I%20want%20a%20wedding%20invitation%20like%20this."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute left-1/2 -translate-x-1/2 text-shimmer"
             style={{
-              fontFamily: 'var(--font-script)',
-              fontSize: 'clamp(26px, 8.8vw, 40px)',
-              lineHeight: 1.45,
-              display: 'block',
-              overflow: 'visible',
-              paddingTop: '0.05em',
-              paddingBottom: '0.10em',
-              paddingLeft: '0.05em',
-              paddingRight: '0.14em',
-              filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
+              bottom: '12px',
+              fontFamily: 'var(--font-serif)',
+              fontSize: '10px',
+              letterSpacing: '0.08em',
+              textDecoration: 'none',
+              textShadow: '0 0 6px rgba(212,175,55,0.2)',
             }}
           >
-            Salsabeel
-          </h1>
-        </div>
+            Designed by Ahmad · WhatsApp
+          </a>
+        </>
       </CurtainAnimation>
 
       {/* Welcome — on top, instantly removed on tap */}

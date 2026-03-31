@@ -155,6 +155,24 @@ export default function WelcomeScreen({ onTap }: { onTap: () => void }) {
           </p>
         </div>
       </div>
+
+      <a
+        href="https://wa.me/201501613143?text=Hi%20Ahmad%2C%20I%20want%20a%20wedding%20invitation%20like%20this."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute left-1/2 -translate-x-1/2 text-shimmer z-10"
+        style={{
+          bottom: '12px',
+          fontFamily: 'var(--font-serif)',
+          fontSize: '10px',
+          letterSpacing: '0.08em',
+          textDecoration: 'none',
+          textShadow: '0 0 6px rgba(212,175,55,0.2)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        Designed by Ahmad · WhatsApp
+      </a>
     </div>
   );
 }
