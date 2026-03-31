@@ -120,18 +120,18 @@ export default function Home() {
       <CurtainAnimation isOpen={stage === 1} onComplete={handleCurtainComplete}>
         <div className="flex flex-col items-center gap-2 px-8 overflow-visible">
           <h1
-            className="text-center"
+            className="text-center text-shimmer"
             style={{
               fontFamily: 'var(--font-script)',
               fontSize: 'clamp(30px, 10vw, 44px)',
               lineHeight: 1.45,
-              color: '#D4AF37',
               display: 'block',
               overflow: 'visible',
               paddingTop: '0.05em',
               paddingBottom: '0.10em',
               paddingLeft: '0.05em',
               paddingRight: '0.14em',
+              filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
             }}
           >
             Ahmad
@@ -140,18 +140,18 @@ export default function Home() {
             <span className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: 'clamp(22px, 8vw, 30px)' }}>&amp;</span>
           </div>
           <h1
-            className="text-center"
+            className="text-center text-shimmer"
             style={{
               fontFamily: 'var(--font-script)',
               fontSize: 'clamp(26px, 8.8vw, 40px)',
               lineHeight: 1.45,
-              color: '#D4AF37',
               display: 'block',
               overflow: 'visible',
               paddingTop: '0.05em',
               paddingBottom: '0.10em',
               paddingLeft: '0.05em',
               paddingRight: '0.14em',
+              filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
             }}
           >
             Salsabeel
