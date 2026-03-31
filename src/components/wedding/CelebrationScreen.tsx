@@ -170,7 +170,18 @@ export default function CelebrationScreen({ visible, onComplete }: CelebrationSc
         {/* Names */}
         <div className={`transition-all duration-1000 ${showNames ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           style={{ transitionDelay: '0.3s' }}>
-          <h2 style={{ fontFamily: 'var(--font-script)', fontSize: '40px', color: '#2C1810', lineHeight: 1.3 }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-script)',
+              fontSize: '40px',
+              color: '#2C1810',
+              lineHeight: 1.4,
+              display: 'inline-block',
+              overflow: 'visible',
+              paddingRight: '0.22em',
+              paddingBottom: '0.08em',
+            }}
+          >
             Ahmad &amp; Salsabeel
           </h2>
         </div>
