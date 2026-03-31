@@ -15,6 +15,8 @@ function ScratchCircle({ label, value, size, onFullyScratched }: ScratchCirclePr
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const doneRef = useRef(false);
   const moveCountRef = useRef(0);
+  const [isAutoRevealing, setIsAutoRevealing] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
 
   const checkPercent = useCallback((canvas: HTMLCanvasElement): number => {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -24,6 +26,27 @@ function ScratchCircle({ label, value, size, onFullyScratched }: ScratchCirclePr
     for (let i = 3; i < data.length; i += 64) { total++; if (data[i] < 128) transparent++; }
     return total > 0 ? transparent / total : 0;
   }, []);
+
+  const revealCurrentCircle = useCallback((canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    setIsAutoRevealing(true);
+    // Animate out the remaining scratched layer, then remove it.
+    window.setTimeout(() => {
+      setIsRevealed(true);
+      setIsAutoRevealing(false);
+    }, 360);
+  }, []);
+
+  const tryCompleteReveal = useCallback((canvas: HTMLCanvasElement) => {
+    if (doneRef.current) return;
+    const pct = checkPercent(canvas);
+    if (pct >= 0.85) {
+      doneRef.current = true;
+      revealCurrentCircle(canvas);
+      onFullyScratched();
+    }
+  }, [checkPercent, onFullyScratched, revealCurrentCircle]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -118,14 +141,10 @@ function ScratchCircle({ label, value, size, onFullyScratched }: ScratchCirclePr
     lastPosRef.current = { x, y };
 
     moveCountRef.current++;
-    if (moveCountRef.current % 8 === 0) {
-      const pct = checkPercent(canvas);
-      if (pct >= 0.98) {
-        doneRef.current = true;
-        onFullyScratched();
-      }
+    if (moveCountRef.current % 4 === 0) {
+      tryCompleteReveal(canvas);
     }
-  }, [checkPercent, onFullyScratched]);
+  }, [tryCompleteReveal]);
 
   const onStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if (doneRef.current) return;
@@ -140,7 +159,12 @@ function ScratchCircle({ label, value, size, onFullyScratched }: ScratchCirclePr
     const p = getPos(e); if (p) doScratch(p.x, p.y);
   }, [getPos, doScratch]);
 
-  const onEnd = useCallback(() => { isDrawingRef.current = false; lastPosRef.current = null; }, []);
+  const onEnd = useCallback(() => {
+    isDrawingRef.current = false;
+    lastPosRef.current = null;
+    const canvas = canvasRef.current;
+    if (canvas) tryCompleteReveal(canvas);
+  }, [tryCompleteReveal]);
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -155,18 +179,38 @@ function ScratchCircle({ label, value, size, onFullyScratched }: ScratchCirclePr
         }}>
           <span style={{ fontFamily: 'var(--font-script)', fontSize: size * 0.45, color: '#2C1810' }}>{value}</span>
         </div>
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 rounded-full cursor-pointer"
-          style={{ width: size, height: size, touchAction: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none', userSelect: 'none' }}
-          onMouseDown={onStart} onMouseMove={onMove} onMouseUp={onEnd} onMouseLeave={onEnd}
-          onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd} onTouchCancel={onEnd}
-        />
-        <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,250,220,0.15) 40%, rgba(255,250,220,0.3) 50%, rgba(255,250,220,0.15) 60%, transparent 100%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 4s linear infinite',
-        }} />
+        {!isRevealed && (
+          <>
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 rounded-full cursor-pointer"
+              style={{
+                width: size,
+                height: size,
+                touchAction: 'none',
+                WebkitTouchCallout: 'none',
+                WebkitUserSelect: 'none',
+                userSelect: 'none',
+                opacity: isAutoRevealing ? 0 : 1,
+                transform: isAutoRevealing ? 'scale(1.08)' : 'scale(1)',
+                filter: isAutoRevealing ? 'blur(1.5px)' : 'blur(0px)',
+                transition: 'opacity 360ms ease, transform 360ms ease, filter 360ms ease',
+                pointerEvents: isAutoRevealing ? 'none' : 'auto',
+              }}
+              onMouseDown={onStart} onMouseMove={onMove} onMouseUp={onEnd} onMouseLeave={onEnd}
+              onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd} onTouchCancel={onEnd}
+            />
+            <div className="absolute inset-0 rounded-full pointer-events-none" style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,250,220,0.15) 40%, rgba(255,250,220,0.3) 50%, rgba(255,250,220,0.15) 60%, transparent 100%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 4s linear infinite',
+              opacity: isAutoRevealing ? 0 : 1,
+              transform: isAutoRevealing ? 'scale(1.08)' : 'scale(1)',
+              filter: isAutoRevealing ? 'blur(1.5px)' : 'blur(0px)',
+              transition: 'opacity 360ms ease, transform 360ms ease, filter 360ms ease',
+            }} />
+          </>
+        )}
       </div>
       <p style={{ fontFamily: 'var(--font-serif)', fontSize: '10px', color: '#D4AF37', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{label}</p>
     </div>
