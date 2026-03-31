@@ -167,7 +167,19 @@ export default function EventDetails({ visible }: EventDetailsProps) {
               <div className="h-px w-16" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
             </div>
             <h3 className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: '32px', marginBottom: '4px' }}>See You There!</h3>
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: '12px', color: '#8B7355', letterSpacing: '0.1em' }}>Ahmad &amp; Salsabeel</p>
+            <p
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: '12px',
+                color: '#8B7355',
+                letterSpacing: '0.1em',
+                display: 'inline-block',
+                overflow: 'visible',
+                paddingRight: '0.18em',
+              }}
+            >
+              Ahmad &amp; Salsabeel
+            </p>
             <p className="mt-1" style={{ fontFamily: 'var(--font-script)', fontSize: '20px', color: '#2C1810' }}>May 2, 2026</p>
           </div>
         </FadeSection>
