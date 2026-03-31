@@ -128,9 +128,9 @@ export default function Home() {
               display: 'block',
               overflow: 'visible',
               paddingTop: '0.05em',
-              paddingBottom: '0.10em',
+              paddingBottom: '0.12em',
               paddingLeft: '0.05em',
-              paddingRight: '0.14em',
+              paddingRight: '0.22em',
               filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
             }}
           >
