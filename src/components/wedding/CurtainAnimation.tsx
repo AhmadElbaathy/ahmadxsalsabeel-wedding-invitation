@@ -2,18 +2,24 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 
+/** Fire music-button gold this many seconds before the curtain clip ends (shorter wait than full end). */
+const EARLY_GOLD_BEFORE_END_SEC = 1.25;
+
 interface CurtainAnimationProps {
   isOpen: boolean;
   onComplete: () => void;
+  /** Fires when the curtain begins fading out (video ended) — e.g. switch UI that no longer sits under the fabric. */
+  onFadingStart?: () => void;
   children: React.ReactNode;
 }
 
-export default function CurtainAnimation({ isOpen, onComplete, children }: CurtainAnimationProps) {
+export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, children }: CurtainAnimationProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const namesRef = useRef<HTMLDivElement>(null);
   const [fading, setFading] = useState(false);
   const hasTriggered = useRef(false);
+  const goldUiNotifiedRef = useRef(false);
   const rafRef = useRef(0);
   const readyRef = useRef(false);
   const bgRef = useRef<HTMLDivElement>(null);
@@ -65,24 +71,44 @@ export default function CurtainAnimation({ isOpen, onComplete, children }: Curta
       rafRef.current = requestAnimationFrame(render);
     }).catch(() => {});
 
+    const notifyGoldOnce = () => {
+      if (goldUiNotifiedRef.current) return;
+      goldUiNotifiedRef.current = true;
+      onFadingStart?.();
+    };
+
+    const onTimeUpdate = () => {
+      const v = videoRef.current;
+      if (!v || goldUiNotifiedRef.current) return;
+      const d = v.duration;
+      if (!Number.isFinite(d) || d <= 0) return;
+      if (d - v.currentTime <= EARLY_GOLD_BEFORE_END_SEC) {
+        notifyGoldOnce();
+      }
+    };
+
     const onEnded = () => {
       cancelAnimationFrame(rafRef.current);
       render();
       setFading(true);
+      notifyGoldOnce();
       setTimeout(onComplete, 800);
     };
+    video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('ended', onEnded);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
+      video.removeEventListener('timeupdate', onTimeUpdate);
       video.removeEventListener('ended', onEnded);
     };
-  }, [isOpen, onComplete, render]);
+  }, [isOpen, onComplete, onFadingStart, render]);
 
   useEffect(() => {
     if (!isOpen) {
       setFading(false);
       hasTriggered.current = false;
+      goldUiNotifiedRef.current = false;
       readyRef.current = false;
       cancelAnimationFrame(rafRef.current);
       if (bgRef.current) bgRef.current.style.opacity = '1';

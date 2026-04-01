@@ -231,15 +231,9 @@
   100% { opacity: 0; transform: translateY(-100%); }
 }
 
-@keyframes float-music {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-3px) rotate(5deg); }
-}
-
 /* Utility animation classes */
 .animate-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; }
 .animate-fade-out-up { animation: fade-out-up 1.8s ease forwards; }
-.animate-float-music { animation: float-music 3s ease-in-out infinite; }
 .animate-curtain-left {
   animation: curtain-open-left 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -387,6 +381,206 @@
 /* Scratch circle glow */
 .scratch-circle-glow {
   box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), 0 0 30px rgba(212, 175, 55, 0.1);
+}
+
+@keyframes music-btn-gold-layer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Music control — frosted glass → metallic gold (gold paints in via ::before; icon color lags slightly so it tracks gold) */
+.music-player-btn {
+  isolation: isolate;
+  transition:
+    background 0.75s ease-in-out,
+    border-color 0.75s ease-in-out,
+    box-shadow 0.75s ease-in-out,
+    color 0.7s ease-out,
+    opacity 0.75s ease-in-out,
+    backdrop-filter 0.75s ease-in-out,
+    -webkit-backdrop-filter 0.75s ease-in-out,
+    filter 0.75s ease-in-out;
+}
+
+.music-player-btn--glass {
+  opacity: 1;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
+
+@keyframes music-btn-mute-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.music-player-btn--glass-muted {
+  opacity: 0.98;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.music-player-btn--glass-muted::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  background: rgba(0, 0, 0, 0.48);
+  opacity: 0;
+  animation: music-btn-mute-overlay-in 0.7s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Post-curtain shell: gold + muted layers crossfade (no swapping ::before/::after = no flash). */
+.music-player-btn--metal-shell {
+  --music-btn-gold-start-delay: 1.35s;
+  --music-btn-gold-reveal-duration: 1s;
+  --music-btn-shell-rim: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  /* One soft rim for all shell states — avoids border/backdrop lerping (pulse) on mute toggle. */
+  border: 1px solid var(--music-btn-shell-rim);
+  background: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  box-shadow: none;
+  /* Kill inherited .music-player-btn transitions so only layer opacity crossfades. */
+  transition: none;
+}
+
+.music-player-btn--metal-shell.music-player-btn--layer-muted-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.music-player-btn--metal-shell.music-player-btn--layer-muted:not(.music-player-btn--layer-muted-glass) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: transparent;
+  /* Dark fill reads better with a hairline warm inner edge (no heavy brown stroke). */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* Do NOT set position: relative here — it overrides Tailwind `fixed` and pins the button to document flow (top-left). */
+.music-player-btn--metal {
+  opacity: 1;
+  transition: color 0.65s ease-out;
+}
+
+/* Curtain path: glass eases out in sync with gold (same delay + duration as .music-player-btn__gold). */
+.music-player-btn--metal-shell:not(.music-player-btn--layer-muted).music-player-btn--metal:not(
+    .music-player-btn--metal-instant
+  ) {
+  transition:
+    background var(--music-btn-gold-reveal-duration) ease-out var(--music-btn-gold-start-delay),
+    box-shadow var(--music-btn-gold-reveal-duration) ease-out var(--music-btn-gold-start-delay),
+    backdrop-filter var(--music-btn-gold-reveal-duration) ease-out var(--music-btn-gold-start-delay),
+    -webkit-backdrop-filter var(--music-btn-gold-reveal-duration) ease-out var(--music-btn-gold-start-delay),
+    color 0.65s ease-out;
+}
+
+/* After unmute from mute: no shell backdrop tween (avoids pulse); gold/muted layers only. */
+.music-player-btn--metal-shell:not(.music-player-btn--layer-muted).music-player-btn--metal.music-player-btn--metal-instant {
+  transition: color 0.65s ease-out;
+}
+
+.music-player-btn__gold {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  background:
+    linear-gradient(
+      128deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 250, 220, 0.28) 40%,
+      rgba(255, 250, 220, 0.42) 50%,
+      rgba(255, 250, 220, 0.26) 60%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    radial-gradient(ellipse 115% 105% at 32% 26%, #f2dc8a 0%, #d4af37 40%, #9a7210 78%, #6b4e0c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  animation: music-btn-gold-layer var(--music-btn-gold-reveal-duration) ease-out var(--music-btn-gold-start-delay) forwards;
+}
+
+.music-player-btn__muted-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.75s ease-out;
+  background: linear-gradient(155deg, #3a302a, #1a120e);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.music-player-btn--layer-muted-glass .music-player-btn__muted-fill {
+  background: rgba(0, 0, 0, 0.52);
+  box-shadow: none;
+}
+
+.music-player-btn--metal-shell:not(.music-player-btn--layer-muted) .music-player-btn__muted-fill {
+  opacity: 0;
+  transition: opacity 0.75s ease-out;
+}
+
+.music-player-btn--metal-shell.music-player-btn--layer-muted .music-player-btn__muted-fill {
+  opacity: 1;
+}
+
+.music-player-btn--metal-shell.music-player-btn--layer-muted .music-player-btn__gold {
+  animation: none;
+  opacity: 0;
+  transition: opacity 0.75s ease-out;
+}
+
+.music-player-btn--metal-shell.music-player-btn--metal-instant:not(.music-player-btn--layer-muted) .music-player-btn__gold {
+  animation: none;
+  opacity: 1;
+  transition: opacity 0.75s ease-out;
+}
+
+.music-player-btn--metal-shell.music-player-btn--metal-instant {
+  --music-btn-gold-start-delay: 0s;
+}
+
+/* Icon stroke uses currentColor; must not be inline `color` or transitions won’t run on the same frame as class swaps. */
+.music-player-btn--icon-light {
+  color: rgba(255, 248, 240, 0.95);
+}
+
+.music-player-btn--icon-dark {
+  color: #2c1810;
+}
+
+.music-player-btn--metal-shell svg,
+.music-player-btn--glass-muted svg {
+  position: relative;
+  z-index: 2;
 }
 
 /* Decorative divider */

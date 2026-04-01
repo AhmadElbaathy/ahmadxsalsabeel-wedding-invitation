@@ -8,6 +8,13 @@ import CelebrationScreen from '@/components/wedding/CelebrationScreen';
 import EventDetails from '@/components/wedding/EventDetails';
 import FloatingPetals from '@/components/wedding/FloatingPetals';
 
+/** Must match `--music-btn-gold-start-delay` + `--music-btn-gold-reveal-duration` in globals.css (ms). */
+const MUSIC_BTN_GOLD_DELAY_MS = 1350;
+const MUSIC_BTN_GOLD_REVEAL_MS = 1000;
+const MUSIC_BTN_GOLD_MS = MUSIC_BTN_GOLD_DELAY_MS + MUSIC_BTN_GOLD_REVEAL_MS;
+/** When speaker switches to dark — starts before gold fully finishes so the wait is shorter (fade speed: CSS `color`). */
+const MUSIC_BTN_ICON_DARK_DELAY_MS = MUSIC_BTN_GOLD_MS - 850;
+
 // 0=Welcome, 1=Curtain, 2=Scratch, 3=Celebration, 4=Details
 type Stage = 0 | 1 | 2 | 3 | 4;
 
@@ -16,9 +23,14 @@ export default function Home() {
   const [showSubtitle, setShowSubtitle] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [watermarkUnlocked, setWatermarkUnlocked] = useState(false);
-  const [celebrationExiting, setCelebrationExiting] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [musicMuted, setMusicMuted] = useState(false);
+  /** True once curtain video ended and fade began — music btn goes gold before stage 2 */
+  const [musicPastCurtain, setMusicPastCurtain] = useState(false);
+  /** Stage 1 only: after curtain, flip after paint so `color` can transition (inline color + same-frame class skips CSS transition). */
+  const [speakerIconDarkAfterCurtain, setSpeakerIconDarkAfterCurtain] = useState(false);
+  /** Unmute from mute → gold with no start-delay; curtain path stays delayed until user mutes. */
+  const [metalInstantReveal, setMetalInstantReveal] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const toggleMusic = useCallback((e?: React.MouseEvent) => {
@@ -28,6 +40,11 @@ export default function Home() {
     if (musicPlaying && !musicMuted) {
       audio.muted = true;
       setMusicMuted(true);
+      setMetalInstantReveal(false);
+    } else if (musicPlaying && musicMuted) {
+      audio.muted = false;
+      setMusicMuted(false);
+      setMetalInstantReveal(true);
     } else {
       audio.muted = false;
       setMusicMuted(false);
@@ -69,6 +86,11 @@ export default function Home() {
     setStage(1);
   }, [startMusic]);
 
+  const handleCurtainFadingStart = useCallback(() => {
+    setMusicPastCurtain(true);
+    setMetalInstantReveal(false);
+  }, []);
+
   const handleCurtainComplete = useCallback(() => {
     setWatermarkUnlocked(true);
     setTimeout(() => setShowSubtitle(true), 300);
@@ -83,17 +105,44 @@ export default function Home() {
   const handleScratchComplete = useCallback(() => { setStage(3); }, []);
 
   const handleCelebrationComplete = useCallback(() => {
-    setCelebrationExiting(true);
-    window.setTimeout(() => {
-      setStage(4);
-      setCelebrationExiting(false);
-    }, 850);
+    setStage(4);
   }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && musicPlaying && stage >= 3) audio.volume = 0.4;
   }, [stage, musicPlaying]);
+
+  useEffect(() => {
+    if (stage === 0) {
+      setMusicPastCurtain(false);
+      setMetalInstantReveal(false);
+    }
+  }, [stage]);
+
+  useEffect(() => {
+    if (musicMuted || stage !== 1) {
+      setSpeakerIconDarkAfterCurtain(false);
+      return;
+    }
+    if (!musicPastCurtain) {
+      setSpeakerIconDarkAfterCurtain(false);
+      return;
+    }
+    setSpeakerIconDarkAfterCurtain(false);
+    const t = window.setTimeout(
+      () => setSpeakerIconDarkAfterCurtain(true),
+      MUSIC_BTN_ICON_DARK_DELAY_MS
+    );
+    return () => window.clearTimeout(t);
+  }, [stage, musicPastCurtain, musicMuted]);
+
+  const unmutedIconDark =
+    !musicMuted &&
+    (stage >= 2 || (stage === 1 && musicPastCurtain && speakerIconDarkAfterCurtain));
+
+  /** Post-curtain: gold + muted layers crossfade (no pseudo swap flash). */
+  const hasMetalShell = (stage === 1 && musicPastCurtain) || stage >= 2;
 
   return (
     <main className="no-scroll" style={{ width: '100vw', height: '100dvh' }}>
@@ -103,21 +152,49 @@ export default function Home() {
       {stage > 0 && musicPlaying && (
         <button
           onClick={toggleMusic}
-          className="fixed z-[100] w-10 h-10 rounded-full flex items-center justify-center animate-float-music"
+          type="button"
+          aria-label={musicMuted ? 'Unmute music' : 'Mute music'}
+          className={`music-player-btn fixed h-11 w-11 rounded-full flex items-center justify-center ${
+            hasMetalShell
+              ? `music-player-btn--metal-shell music-player-btn--metal ${
+                  musicMuted
+                    ? `music-player-btn--layer-muted${stage === 1 ? ' music-player-btn--layer-muted-glass' : ''}`
+                    : `${metalInstantReveal ? 'music-player-btn--metal-instant' : ''} ${
+                        unmutedIconDark ? 'music-player-btn--icon-dark' : 'music-player-btn--icon-light'
+                      }`
+                }`
+              : musicMuted
+                ? 'music-player-btn--glass-muted'
+                : 'music-player-btn--glass music-player-btn--icon-light'
+          }`}
           style={{
-            bottom: '20px', right: '20px',
-            background: musicMuted ? 'rgba(44, 24, 16, 0.5)' : 'linear-gradient(135deg, #D4AF37, #B8942E)',
-            boxShadow: musicMuted ? '0 2px 10px rgba(0,0,0,0.2)' : '0 2px 15px rgba(212, 175, 55, 0.4)',
-            border: 'none', cursor: 'pointer', transition: 'all 0.3s ease', backdropFilter: 'blur(10px)',
+            bottom: '20px',
+            right: '20px',
+            cursor: 'pointer',
+            zIndex: 110,
           }}
         >
+          {hasMetalShell && (
+            <>
+              <span className="music-player-btn__gold" aria-hidden />
+              <span className="music-player-btn__muted-fill" aria-hidden />
+            </>
+          )}
           {musicMuted ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path d="M11 5L6 9H2v6h4l5 4V5z" strokeLinecap="round" strokeLinejoin="round" />
               <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
             </svg>
           ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C1810" strokeWidth="2">
+            <svg
+              className="relative z-10"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M11 5L6 9H2v6h4l5 4V5z" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M15.54 8.46a5 5 0 010 7.07" strokeLinecap="round" />
               <path d="M19.07 4.93a10 10 0 010 14.14" strokeLinecap="round" />
@@ -128,7 +205,11 @@ export default function Home() {
 
       {/* Curtain — only while welcome/curtain stages; unmount after so reset state cannot flash through faded overlays */}
       {stage <= 1 && (
-      <CurtainAnimation isOpen={stage === 1} onComplete={handleCurtainComplete}>
+      <CurtainAnimation
+        isOpen={stage === 1}
+        onComplete={handleCurtainComplete}
+        onFadingStart={handleCurtainFadingStart}
+      >
         <>
           <div className="flex flex-col items-center gap-2 px-8 overflow-visible">
             <h1
@@ -245,15 +326,7 @@ export default function Home() {
 
       {stage === 2 && <ScratchCard visible onComplete={handleScratchComplete} />}
       {stage === 3 && (
-        <div
-          style={{
-            opacity: celebrationExiting ? 0 : 1,
-            transition: 'opacity 0.85s ease',
-            pointerEvents: celebrationExiting ? 'none' : 'auto',
-          }}
-        >
-          <CelebrationScreen visible onComplete={handleCelebrationComplete} />
-        </div>
+        <CelebrationScreen visible onComplete={handleCelebrationComplete} />
       )}
       {stage === 4 && <EventDetails visible />}
     </main>
