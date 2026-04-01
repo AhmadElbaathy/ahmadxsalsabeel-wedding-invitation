@@ -156,7 +156,7 @@ export default function Home() {
           onClick={toggleMusic}
           type="button"
           aria-label={musicMuted ? 'Unmute music' : 'Mute music'}
-          className={`music-player-btn fixed h-11 w-11 rounded-full flex items-center justify-center ${
+          className={`music-player-btn fixed fixed-music-btn-offset h-11 w-11 rounded-full flex items-center justify-center ${
             hasMetalShell
               ? `music-player-btn--metal-shell music-player-btn--metal ${
                   musicMuted
@@ -170,8 +170,6 @@ export default function Home() {
                 : 'music-player-btn--glass music-player-btn--icon-light'
           }`}
           style={{
-            bottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
-            right: 'calc(20px + env(safe-area-inset-right, 0px))',
             cursor: 'pointer',
             zIndex: 110,
           }}
@@ -261,7 +259,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="absolute left-1/2 -translate-x-1/2 text-shimmer"
               style={{
-                bottom: 'calc(18px + env(safe-area-inset-bottom, 0px))',
+                bottom: '18px',
                 fontFamily: 'var(--font-serif)',
                 fontSize: '10px',
                 letterSpacing: '0.08em',
@@ -284,9 +282,8 @@ export default function Home() {
           href="https://wa.me/201501613143?text=Hi%2C%20I%27d%20like%20to%20request%20a%20wedding%20invitation%20design."
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed left-1/2 -translate-x-1/2 z-[101] text-shimmer"
+          className="fixed left-1/2 -translate-x-1/2 z-[101] text-shimmer fixed-watermark-offset"
           style={{
-            bottom: 'calc(18px + env(safe-area-inset-bottom, 0px))',
             fontFamily: 'var(--font-serif)',
             fontSize: '10px',
             letterSpacing: '0.08em',

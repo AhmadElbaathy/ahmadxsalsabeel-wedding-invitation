@@ -11,8 +11,11 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  /** Lets Safari iOS status / toolbar show through instead of tinting maroon or cream */
-  themeColor: "transparent",
+  /** Per-scheme tags — some iOS versions only honor the light-scheme meta */
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "transparent" },
+    { media: "(prefers-color-scheme: dark)", color: "transparent" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -33,6 +36,10 @@ export const metadata: Metadata = {
     description: "You are cordially invited to the wedding of Ahmad & Salsabeel on 2 May 2026",
     images: ["/og-image.png"],
   },
+  /** Translucent status bar when saved to Home Screen; harmless in Safari tab */
+  appleWebApp: {
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -40,7 +47,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className={`${greatVibes.variable} ${cormorant.variable} antialiased`}
         style={{ fontFamily: "var(--font-serif), Georgia, serif", overflow: "hidden" }}>
-        {children}
+        {/* Cream lives only here — html/body stay transparent so iOS chrome isn’t filled by our background */}
+        <div className="app-cream-shell">{children}</div>
       </body>
     </html>
   );
