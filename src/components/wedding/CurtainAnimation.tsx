@@ -5,6 +5,58 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 /** Fire music-button gold this many seconds before the curtain clip ends (shorter wait than full end). */
 const EARLY_GOLD_BEFORE_END_SEC = 1.25;
 
+const CREAM_R = 255;
+const CREAM_G = 250;
+const CREAM_B = 240;
+
+/** Uniform black bars (letterbox) vs dark curtain fabric: bars have ~flat luminance across the row/col. */
+function detectVideoContentBounds(px: Uint8ClampedArray, w: number, h: number) {
+  const lum = (i: number) => 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+
+  const rowUniformBlack = (y: number) => {
+    let minL = 255;
+    let maxL = 0;
+    let sum = 0;
+    for (let x = 0; x < w; x++) {
+      const l = lum((y * w + x) * 4);
+      sum += l;
+      if (l < minL) minL = l;
+      if (l > maxL) maxL = l;
+    }
+    const mean = sum / w;
+    return mean < 12 && maxL - minL < 28;
+  };
+
+  let minY = 0;
+  while (minY < h && rowUniformBlack(minY)) minY++;
+  let maxY = h - 1;
+  while (maxY > minY && rowUniformBlack(maxY)) maxY--;
+  if (minY >= maxY) return null;
+
+  const colUniformBlack = (x: number, y0: number, y1: number) => {
+    let minL = 255;
+    let maxL = 0;
+    let sum = 0;
+    const span = y1 - y0 + 1;
+    for (let y = y0; y <= y1; y++) {
+      const l = lum((y * w + x) * 4);
+      sum += l;
+      if (l < minL) minL = l;
+      if (l > maxL) maxL = l;
+    }
+    const mean = sum / span;
+    return mean < 12 && maxL - minL < 28;
+  };
+
+  let minX = 0;
+  while (minX < w && colUniformBlack(minX, minY, maxY)) minX++;
+  let maxX = w - 1;
+  while (maxX > minX && colUniformBlack(maxX, minY, maxY)) maxX--;
+
+  if (minX >= maxX || minY >= maxY) return null;
+  return { minX, minY, maxX, maxY };
+}
+
 interface CurtainAnimationProps {
   isOpen: boolean;
   onComplete: () => void;
@@ -22,7 +74,10 @@ export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, ch
   const goldUiNotifiedRef = useRef(false);
   const rafRef = useRef(0);
   const readyRef = useRef(false);
-  const bgRef = useRef<HTMLDivElement>(null);
+  /** Theater red until first frame — hidden with display:none synchronously (setState would lag one frame and keyed edges still picked up red) */
+  const bgRedRef = useRef<HTMLDivElement>(null);
+  /** Video letterbox (black bars) — if chroma-keyed like stage blacks, bg showed through in bands not behind fabric */
+  const contentBoundsRef = useRef<{ minX: number; minY: number; maxX: number; maxY: number } | null>(null);
 
   const render = useCallback(() => {
     const video = videoRef.current;
@@ -32,23 +87,49 @@ export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, ch
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const w = canvas.width;
+    const h = canvas.height;
 
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, w, h);
+
+    const img = ctx.getImageData(0, 0, w, h);
     const px = img.data;
-    for (let i = 0; i < px.length; i += 4) {
-      const l = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
-      if (l < 8) {
-        px[i + 3] = 0;
-      } else if (l < 18) {
-        px[i + 3] = ((l - 8) / 10) * 255 | 0;
+
+    if (!contentBoundsRef.current) {
+      contentBoundsRef.current = detectVideoContentBounds(px, w, h);
+    }
+    const b = contentBoundsRef.current;
+
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4;
+        const l = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+
+        const inContent =
+          !b || (x >= b.minX && x <= b.maxX && y >= b.minY && y <= b.maxY);
+
+        // Letterbox / pillarbox: keep opaque cream — do not key to transparent (would reveal bg / wrong red bands)
+        if (!inContent && l < 22) {
+          px[i] = CREAM_R;
+          px[i + 1] = CREAM_G;
+          px[i + 2] = CREAM_B;
+          px[i + 3] = 255;
+          continue;
+        }
+
+        if (l < 8) {
+          px[i + 3] = 0;
+        } else if (l < 18) {
+          px[i + 3] = ((l - 8) / 10) * 255 | 0;
+        }
       }
     }
     ctx.putImageData(img, 0, 0);
 
     if (!readyRef.current) {
       readyRef.current = true;
-      if (bgRef.current) bgRef.current.style.opacity = '0';
+      const red = bgRedRef.current;
+      if (red) red.style.display = 'none';
       if (namesRef.current) namesRef.current.style.opacity = '1';
     }
 
@@ -110,8 +191,9 @@ export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, ch
       hasTriggered.current = false;
       goldUiNotifiedRef.current = false;
       readyRef.current = false;
+      contentBoundsRef.current = null;
       cancelAnimationFrame(rafRef.current);
-      if (bgRef.current) bgRef.current.style.opacity = '1';
+      if (bgRedRef.current) bgRedRef.current.style.display = '';
       if (namesRef.current) namesRef.current.style.opacity = '0';
       if (videoRef.current) {
         videoRef.current.pause();
@@ -122,23 +204,30 @@ export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, ch
 
   return (
     <div className="fixed inset-0" style={{ zIndex: 40, overflow: 'visible' }}>
-      {/* Layer 1: dark background */}
+      {/* Layer 1: invitation cream — always under stack; stops red bleed through semi-transparent / edge keyed pixels */}
       <div
-        ref={bgRef}
         className="absolute inset-0"
         style={{
           zIndex: 1,
+          backgroundColor: '#FFFAF0',
+        }}
+      />
+      {/* Layer 2: theater red until first painted frame — hidden via ref synchronously on first frame */}
+      <div
+        ref={bgRedRef}
+        className="absolute inset-0"
+        style={{
+          zIndex: 2,
           backgroundColor: '#5A1010',
-          transition: 'opacity 0.6s ease',
         }}
       />
 
-      {/* Layer 2: names — hidden until first canvas frame */}
+      {/* Layer 3: names — hidden until first canvas frame */}
       <div
         ref={namesRef}
         className="absolute inset-0 flex items-center justify-center"
         style={{
-          zIndex: 2,
+          zIndex: 3,
           opacity: 0,
           transition: 'opacity 0.5s ease',
           overflow: 'visible',
@@ -147,12 +236,12 @@ export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, ch
         {children}
       </div>
 
-      {/* Layer 3: canvas curtain */}
+      {/* Layer 4: canvas curtain */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
         style={{
-          zIndex: 3,
+          zIndex: 4,
           opacity: fading ? 0 : 1,
           transition: 'opacity 0.8s ease',
           pointerEvents: 'none',

@@ -6,7 +6,7 @@ const greatVibes = Great_Vibes({ weight: "400", variable: "--font-script", subse
 const cormorant = Cormorant_Garamond({ variable: "--font-serif", subsets: ["latin"], display: "swap" });
 
 export const viewport: Viewport = {
-  width: "device-width", initialScale: 1, maximumScale: 1, userScalable: false, themeColor: "#7B1818",
+  width: "device-width", initialScale: 1, maximumScale: 1, userScalable: false, themeColor: "#FFFAF0",
 };
 
 export const metadata: Metadata = {
