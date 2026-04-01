@@ -82,6 +82,8 @@ export default function Home() {
   }, []);
 
   const handleWelcomeTap = useCallback(() => {
+    // Show control immediately — on mobile play() / canplaythrough often resolve late after the gesture.
+    setMusicPlaying(true);
     startMusic();
     setStage(1);
   }, [startMusic]);
