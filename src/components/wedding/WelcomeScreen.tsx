@@ -157,7 +157,7 @@ export default function WelcomeScreen({ onTap }: { onTap: () => void }) {
       </div>
 
       <a
-        href="https://wa.me/201501613143?text=Hi%20Ahmad%2C%20I%20want%20a%20wedding%20invitation%20like%20this."
+        href="https://wa.me/201501613143?text=Hi%2C%20I%27d%20like%20to%20request%20a%20wedding%20invitation%20design."
         target="_blank"
         rel="noopener noreferrer"
         className="absolute left-1/2 -translate-x-1/2 text-shimmer z-10"
@@ -171,7 +171,7 @@ export default function WelcomeScreen({ onTap }: { onTap: () => void }) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        Designed by Ahmad · WhatsApp
+        Tap to request your design
       </a>
     </div>
   );

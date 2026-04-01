@@ -255,14 +255,14 @@ export default function ScratchCard({ visible, onComplete }: ScratchCardProps) {
         </p>
       </div>
       <div className={`flex items-end justify-center gap-4 transition-all duration-1000 delay-300 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <ScratchCircle label="Month" value="5" size={sz} onFullyScratched={() => markDone(0)} />
+        <ScratchCircle label="Day" value="2" size={sz} onFullyScratched={() => markDone(0)} />
         <div style={{ marginBottom: '34px', color: '#D4AF37', fontFamily: 'var(--font-script)', fontSize: '26px', opacity: 0.5 }}>/</div>
-        <ScratchCircle label="Day" value="2" size={sz} onFullyScratched={() => markDone(1)} />
+        <ScratchCircle label="Month" value="5" size={sz} onFullyScratched={() => markDone(1)} />
         <div style={{ marginBottom: '34px', color: '#D4AF37', fontFamily: 'var(--font-script)', fontSize: '26px', opacity: 0.5 }}>/</div>
         <ScratchCircle label="Year" value="26" size={sz} onFullyScratched={() => markDone(2)} />
       </div>
       <div className={`absolute bottom-10 left-0 right-0 flex flex-col items-center gap-2 transition-all duration-1000 ${allDone ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <p className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: '26px' }}>May 2, 2026</p>
+        <p className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: '26px' }}>2 May 2026</p>
         <p style={{ fontFamily: 'var(--font-serif)', fontSize: '11px', color: '#8B7355', letterSpacing: '0.15em' }}>save the date</p>
       </div>
     </div>

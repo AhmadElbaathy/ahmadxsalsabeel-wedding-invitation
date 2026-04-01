@@ -15,6 +15,8 @@ export default function Home() {
   const [stage, setStage] = useState<Stage>(0);
   const [showSubtitle, setShowSubtitle] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
+  const [watermarkUnlocked, setWatermarkUnlocked] = useState(false);
+  const [celebrationExiting, setCelebrationExiting] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [musicMuted, setMusicMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -68,6 +70,7 @@ export default function Home() {
   }, [startMusic]);
 
   const handleCurtainComplete = useCallback(() => {
+    setWatermarkUnlocked(true);
     setTimeout(() => setShowSubtitle(true), 300);
     setTimeout(() => setFadingOut(true), 2000);
     setTimeout(() => {
@@ -78,7 +81,14 @@ export default function Home() {
   }, []);
 
   const handleScratchComplete = useCallback(() => { setStage(3); }, []);
-  const handleCelebrationComplete = useCallback(() => { setStage(4); }, []);
+
+  const handleCelebrationComplete = useCallback(() => {
+    setCelebrationExiting(true);
+    window.setTimeout(() => {
+      setStage(4);
+      setCelebrationExiting(false);
+    }, 850);
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -116,7 +126,8 @@ export default function Home() {
         </button>
       )}
 
-      {/* Curtain — always rendered, plays at stage 1 */}
+      {/* Curtain — only while welcome/curtain stages; unmount after so reset state cannot flash through faded overlays */}
+      {stage <= 1 && (
       <CurtainAnimation isOpen={stage === 1} onComplete={handleCurtainComplete}>
         <>
           <div className="flex flex-col items-center gap-2 px-8 overflow-visible">
@@ -158,27 +169,49 @@ export default function Home() {
               Salsabeel
             </h1>
           </div>
-          <a
-            href="https://wa.me/201501613143?text=Hi%20Ahmad%2C%20I%20want%20a%20wedding%20invitation%20like%20this."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute left-1/2 -translate-x-1/2 text-shimmer"
-            style={{
-              bottom: '12px',
-              fontFamily: 'var(--font-serif)',
-              fontSize: '10px',
-              letterSpacing: '0.08em',
-              textDecoration: 'none',
-              textShadow: '0 0 6px rgba(212,175,55,0.2)',
-            }}
-          >
-            Designed by Ahmad · WhatsApp
-          </a>
+          {!watermarkUnlocked && (
+            <a
+              href="https://wa.me/201501613143?text=Hi%2C%20I%27d%20like%20to%20request%20a%20wedding%20invitation%20design."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute left-1/2 -translate-x-1/2 text-shimmer"
+              style={{
+                bottom: '18px',
+                fontFamily: 'var(--font-serif)',
+                fontSize: '10px',
+                letterSpacing: '0.08em',
+                textDecoration: 'none',
+                filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
+              }}
+            >
+              Tap to request your design
+            </a>
+          )}
         </>
       </CurtainAnimation>
+      )}
 
       {/* Welcome — on top, instantly removed on tap */}
       {stage === 0 && <WelcomeScreen onTap={handleWelcomeTap} />}
+
+      {watermarkUnlocked && (
+        <a
+          href="https://wa.me/201501613143?text=Hi%2C%20I%27d%20like%20to%20request%20a%20wedding%20invitation%20design."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed left-1/2 -translate-x-1/2 z-[101] text-shimmer"
+          style={{
+            bottom: '18px',
+            fontFamily: 'var(--font-serif)',
+            fontSize: '10px',
+            letterSpacing: '0.08em',
+            textDecoration: 'none',
+            filter: 'drop-shadow(0 0 6px rgba(212,175,55,0.35))',
+          }}
+        >
+          Tap to request your design
+        </a>
+      )}
 
       {/* "we're getting married" + gold line */}
       {stage === 1 && showSubtitle && (
@@ -211,7 +244,17 @@ export default function Home() {
       )}
 
       {stage === 2 && <ScratchCard visible onComplete={handleScratchComplete} />}
-      {stage === 3 && <CelebrationScreen visible onComplete={handleCelebrationComplete} />}
+      {stage === 3 && (
+        <div
+          style={{
+            opacity: celebrationExiting ? 0 : 1,
+            transition: 'opacity 0.85s ease',
+            pointerEvents: celebrationExiting ? 'none' : 'auto',
+          }}
+        >
+          <CelebrationScreen visible onComplete={handleCelebrationComplete} />
+        </div>
+      )}
       {stage === 4 && <EventDetails visible />}
     </main>
   );

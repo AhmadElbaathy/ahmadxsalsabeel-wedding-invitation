@@ -68,7 +68,14 @@ export default function EventDetails({ visible }: EventDetailsProps) {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 scroll-y no-scroll" style={{ backgroundColor: '#FFFAF0', zIndex: 45 }}>
+    <div
+      className="fixed inset-0 scroll-y no-scroll"
+      style={{
+        backgroundColor: '#FFFAF0',
+        zIndex: 45,
+        animation: 'fade-in 0.85s ease-out forwards',
+      }}
+    >
       <div className="sticky top-0 z-10 pt-4 pb-2 px-6" style={{ background: 'linear-gradient(180deg, #FFFAF0 70%, transparent)' }}>
         <div className="flex items-center justify-center gap-2">
           <div className="h-px flex-1 mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3))' }} />
@@ -98,7 +105,7 @@ export default function EventDetails({ visible }: EventDetailsProps) {
           <div className="flex justify-center mb-8">
             <div className="inline-flex flex-col items-center py-4 px-10 rounded-full" style={{ border: '2px solid rgba(212,175,55,0.3)', background: 'linear-gradient(135deg, rgba(212,175,55,0.05), rgba(212,175,55,0.1))' }}>
               <span style={{ fontFamily: 'var(--font-serif)', fontSize: '10px', color: '#D4AF37', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Save the Date</span>
-              <span style={{ fontFamily: 'var(--font-script)', fontSize: '30px', color: '#2C1810' }}>May 2, 2026</span>
+              <span style={{ fontFamily: 'var(--font-script)', fontSize: '30px', color: '#2C1810' }}>2 May 2026</span>
             </div>
           </div>
         </FadeSection>
@@ -134,6 +141,54 @@ export default function EventDetails({ visible }: EventDetailsProps) {
                   <div className="flex items-center gap-2">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#8B7355" strokeWidth="1" /><path d="M7 4V7L9 9" stroke="#8B7355" strokeWidth="1" strokeLinecap="round" /></svg>
                     <span style={{ fontFamily: 'var(--font-serif)', fontSize: '13px', color: '#8B7355' }}>Time: 2:30 PM</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+                      <path
+                        d="M1.5 13.15V6.8H3.5Q7 2.05 10.5 6.8H12.5V13.15H1.5Z"
+                        stroke="#8B7355"
+                        strokeWidth="1"
+                        fill="none"
+                        strokeLinejoin="round"
+                      />
+                      <path d="M2.05 8.15h9.9" stroke="#8B7355" strokeWidth="0.85" strokeLinecap="round" />
+                      <circle cx="7" cy="4.35" r="0.72" stroke="#8B7355" strokeWidth="0.85" fill="none" />
+                      <path
+                        d="M2.35 6.48h1.15M10.5 6.48h1.15"
+                        stroke="#8B7355"
+                        strokeWidth="0.85"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M2.3 11.72V9.92Q2.72 9.2 3.14 9.92V11.72"
+                        stroke="#8B7355"
+                        strokeWidth="0.85"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M10.86 11.72V9.92Q11.28 9.2 11.7 9.92V11.72"
+                        stroke="#8B7355"
+                        strokeWidth="0.85"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M5.65 13.15V10.28Q7 8.98 8.35 10.28V13.15"
+                        stroke="#8B7355"
+                        strokeWidth="0.85"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M4.55 10.45Q4.9 9.92 5.25 10.45M8.75 10.45Q9.1 9.92 9.45 10.45"
+                        stroke="#8B7355"
+                        strokeWidth="0.8"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '13px', color: '#8B7355' }}>Venue: One View</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2C7 2 4 5 4 7.5C4 9.5 5.5 11 7 11C8.5 11 10 9.5 10 7.5C10 5 7 2 7 2Z" stroke="#8B7355" strokeWidth="1" fill="none" /></svg>
@@ -180,7 +235,7 @@ export default function EventDetails({ visible }: EventDetailsProps) {
             >
               Ahmad &amp; Salsabeel
             </p>
-            <p className="mt-1" style={{ fontFamily: 'var(--font-script)', fontSize: '20px', color: '#2C1810' }}>May 2, 2026</p>
+            <p className="mt-1" style={{ fontFamily: 'var(--font-script)', fontSize: '20px', color: '#2C1810' }}>2 May 2026</p>
           </div>
         </FadeSection>
       </div>

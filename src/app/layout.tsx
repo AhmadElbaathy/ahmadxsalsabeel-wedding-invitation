@@ -12,11 +12,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://ahmad-salsabeel-wedding.vercel.app"),
   title: "Ahmad & Salsabeel — Wedding Invitation",
-  description: "You are cordially invited to the wedding of Ahmad & Salsabeel on May 2, 2026. Join us for a day of love, joy, and celebration!",
+  description: "You are cordially invited to the wedding of Ahmad & Salsabeel on 2 May 2026. Join us for a day of love, joy, and celebration!",
   icons: { icon: "/favicon.ico" },
   openGraph: {
     title: "Ahmad & Salsabeel — Wedding Invitation",
-    description: "You are cordially invited to the wedding of Ahmad & Salsabeel on May 2, 2026. Join us for a day of love, joy, and celebration!",
+    description: "You are cordially invited to the wedding of Ahmad & Salsabeel on 2 May 2026. Join us for a day of love, joy, and celebration!",
     type: "website",
     siteName: "Ahmad & Salsabeel Wedding",
     images: [{ url: "/og-image.png", width: 1344, height: 768, alt: "Ahmad & Salsabeel Wedding Invitation" }],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ahmad & Salsabeel — Wedding Invitation",
-    description: "You are cordially invited to the wedding of Ahmad & Salsabeel on May 2, 2026",
+    description: "You are cordially invited to the wedding of Ahmad & Salsabeel on 2 May 2026",
     images: ["/og-image.png"],
   },
 };

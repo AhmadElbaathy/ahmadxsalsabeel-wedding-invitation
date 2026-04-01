@@ -108,11 +108,23 @@ export default function CelebrationScreen({ visible, onComplete }: CelebrationSc
     <div className="fixed inset-0 flex flex-col items-center justify-center"
       style={{ backgroundColor: '#FFFAF0', zIndex: 45, overflow: 'hidden' }}>
 
-      {/* Decorative frame */}
-      <div className="absolute inset-6 border-2 rounded-2xl animate-scale-in"
+      {/* Opacity-only: scale-in shifted the bottom border vs. the mask and hid the gap until the end */}
+      <div className="absolute inset-6 border-2 rounded-2xl animate-fade-in"
         style={{ borderColor: 'rgba(212, 175, 55, 0.2)' }} />
-      <div className="absolute inset-10 border rounded-xl animate-scale-in delay-200"
+      <div className="absolute inset-10 border rounded-xl animate-fade-in delay-200"
         style={{ borderColor: 'rgba(212, 175, 55, 0.1)' }} />
+
+      {/* Erase bottom frame lines under watermark area (page bg) — line stops before text, continues after */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+        style={{
+          bottom: '18px',
+          width: 'min(135px, 30vw)',
+          height: '13px',
+          background: '#FFFAF0',
+          zIndex: 4,
+        }}
+      />
 
       {/* Corner ornaments */}
       {[
@@ -152,10 +164,25 @@ export default function CelebrationScreen({ visible, onComplete }: CelebrationSc
         </div>
 
         {/* Date */}
-        <div className={`transition-all duration-1000 ${showDate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-          style={{ transitionDelay: '0.2s' }}>
-          <h1 className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: '52px', lineHeight: 1.2 }}>
-            May 2, 2026
+        <div
+          className={`flex w-full justify-center transition-all duration-1000 overflow-visible ${showDate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          style={{ transitionDelay: '0.2s' }}
+        >
+          <h1
+            className="text-shimmer"
+            style={{
+              fontFamily: 'var(--font-script)',
+              fontSize: '52px',
+              lineHeight: 1.35,
+              display: 'inline-block',
+              overflow: 'visible',
+              paddingLeft: '0.14em',
+              paddingRight: '0.06em',
+              paddingTop: '0.04em',
+              paddingBottom: '0.08em',
+            }}
+          >
+            2 May 2026
           </h1>
         </div>
 
