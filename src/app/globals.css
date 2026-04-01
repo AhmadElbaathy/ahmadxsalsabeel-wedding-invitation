@@ -392,6 +392,17 @@
   }
 }
 
+/* Like scratch circles / Reveal: subtle life, no outer glow */
+@keyframes music-btn-metal-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
 /* Music control — frosted glass → metallic gold (gold paints in via ::before; icon color lags slightly so it tracks gold) */
 .music-player-btn {
   isolation: isolate;
@@ -501,11 +512,27 @@
   transition: color 0.65s ease-out;
 }
 
-.music-player-btn__gold {
+.music-player-btn__gold-stack {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: music-btn-metal-breathe 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.music-player-btn--metal-shell.music-player-btn--layer-muted .music-player-btn__gold-stack {
+  animation: none;
+}
+
+.music-player-btn__gold {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
   background:
     linear-gradient(
       128deg,
@@ -522,6 +549,25 @@
   opacity: 0;
   pointer-events: none;
   animation: music-btn-gold-layer var(--music-btn-gold-reveal-duration) ease-out var(--music-btn-gold-start-delay) forwards;
+}
+
+/* Same moving highlight as ScratchCard canvas overlay (Reveal / circles “alive”) */
+.music-player-btn__gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 250, 220, 0.14) 40%,
+    rgba(255, 250, 220, 0.32) 50%,
+    rgba(255, 250, 220, 0.14) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 4s linear infinite;
+  pointer-events: none;
 }
 
 .music-player-btn__muted-fill {

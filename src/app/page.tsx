@@ -176,7 +176,9 @@ export default function Home() {
         >
           {hasMetalShell && (
             <>
-              <span className="music-player-btn__gold" aria-hidden />
+              <span className="music-player-btn__gold-stack" aria-hidden>
+                <span className="music-player-btn__gold" />
+              </span>
               <span className="music-player-btn__muted-fill" aria-hidden />
             </>
           )}

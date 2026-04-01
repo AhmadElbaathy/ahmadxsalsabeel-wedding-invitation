@@ -171,7 +171,6 @@ function ScratchCircle({ label, value, size, onFullyScratched }: ScratchCirclePr
       <div className="relative rounded-full" style={{
         width: size, height: size,
         boxShadow: '0 0 15px rgba(212,175,55,0.4), 0 0 30px rgba(212,175,55,0.2), 0 0 50px rgba(212,175,55,0.1)',
-        animation: 'breathe 3s ease-in-out infinite',
       }}>
         <div className="absolute inset-0 flex items-center justify-center rounded-full" style={{
           background: 'linear-gradient(135deg, #FFFAF0, #FFF8EC)',
