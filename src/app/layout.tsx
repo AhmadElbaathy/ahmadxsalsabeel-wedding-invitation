@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Great_Vibes, Cormorant_Garamond } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const greatVibes = Great_Vibes({ weight: "400", variable: "--font-script", subsets: ["latin"], display: "swap" });
@@ -11,7 +12,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  /** Matches welcome screen; SafariThemeColor (client) switches to transparent after “tap to open” */
+  /** Matches welcome; client switches meta + edge strips to cream #FFFAF0 after “tap to open” */
   themeColor: "#5A1010",
 };
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         style={{ fontFamily: "var(--font-serif), Georgia, serif", overflow: "hidden" }}>
         {/* Cream lives only here — html/body stay transparent so iOS chrome isn’t filled by our background */}
         <div className="app-cream-shell">{children}</div>
+        <Analytics />
       </body>
     </html>
   );
