@@ -70,6 +70,38 @@
   --wedding-text: #2C1810;
 }
 
+/*
+ * iOS Safari: avoid solid cream/red behind the status bar and home-indicator strip.
+ * Cream only paints in the safe content box; padding uses transparent html behind it.
+ */
+html {
+  height: 100%;
+  background: transparent;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  margin: 0;
+  background-color: #fffaf0;
+  background-clip: content-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  box-sizing: border-box;
+}
+
+/* Fullscreen wedding layers — inset so they don’t paint under Safari chrome */
+.safe-area-screen {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  right: env(safe-area-inset-right, 0px);
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: env(safe-area-inset-left, 0px);
+}
+
 /* Wedding custom animations */
 
 @keyframes curtain-open-left {
@@ -369,8 +401,10 @@
 /* Body overflow handling */
 .no-scroll {
   overflow: hidden;
-  height: 100dvh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .scroll-y {

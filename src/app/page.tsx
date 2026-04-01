@@ -147,7 +147,7 @@ export default function Home() {
   const hasMetalShell = (stage === 1 && musicPastCurtain) || stage >= 2;
 
   return (
-    <main className="no-scroll" style={{ width: '100vw', height: '100dvh' }}>
+    <main className="no-scroll">
       <audio ref={audioRef} src="/bgm.mp3" loop preload="auto" playsInline />
       <FloatingPetals active={stage === 4} />
 
@@ -170,8 +170,8 @@ export default function Home() {
                 : 'music-player-btn--glass music-player-btn--icon-light'
           }`}
           style={{
-            bottom: '20px',
-            right: '20px',
+            bottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
+            right: 'calc(20px + env(safe-area-inset-right, 0px))',
             cursor: 'pointer',
             zIndex: 110,
           }}
@@ -261,7 +261,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="absolute left-1/2 -translate-x-1/2 text-shimmer"
               style={{
-                bottom: '18px',
+                bottom: 'calc(18px + env(safe-area-inset-bottom, 0px))',
                 fontFamily: 'var(--font-serif)',
                 fontSize: '10px',
                 letterSpacing: '0.08em',
@@ -286,7 +286,7 @@ export default function Home() {
           rel="noopener noreferrer"
           className="fixed left-1/2 -translate-x-1/2 z-[101] text-shimmer"
           style={{
-            bottom: '18px',
+            bottom: 'calc(18px + env(safe-area-inset-bottom, 0px))',
             fontFamily: 'var(--font-serif)',
             fontSize: '10px',
             letterSpacing: '0.08em',
@@ -301,7 +301,7 @@ export default function Home() {
       {/* "we're getting married" + gold line */}
       {stage === 1 && showSubtitle && (
         <div
-          className="fixed inset-0 flex flex-col items-center justify-end pb-32 pointer-events-none"
+          className="fixed safe-area-screen flex flex-col items-center justify-end pb-32 pointer-events-none"
           style={{ zIndex: 52, opacity: fadingOut ? 0 : 1, transition: 'opacity 0.7s ease' }}
         >
           <p className="text-shimmer" style={{
@@ -323,7 +323,7 @@ export default function Home() {
 
       {/* Cream overlay to transition to scratch */}
       {stage === 1 && fadingOut && (
-        <div className="fixed inset-0" style={{
+        <div className="fixed safe-area-screen" style={{
           zIndex: 53, backgroundColor: '#FFFAF0', animation: 'fade-in 0.7s ease forwards',
         }} />
       )}

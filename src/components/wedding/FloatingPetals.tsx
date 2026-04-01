@@ -38,7 +38,7 @@ export default function FloatingPetals({ active = false }: { active?: boolean })
   if (!active || petals.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
+    <div className="fixed safe-area-screen pointer-events-none z-10 overflow-hidden">
       {petals.map((petal) => (
         <div
           key={petal.id}

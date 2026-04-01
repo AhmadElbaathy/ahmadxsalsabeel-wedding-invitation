@@ -30,7 +30,7 @@ export default function WelcomeScreen({ onTap }: { onTap: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center cursor-pointer"
+      className="fixed safe-area-screen z-50 flex flex-col items-center justify-center cursor-pointer"
       style={{ backgroundColor: '#5A1010' }}
       onClick={onTap}
     >

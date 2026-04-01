@@ -6,7 +6,13 @@ const greatVibes = Great_Vibes({ weight: "400", variable: "--font-script", subse
 const cormorant = Cormorant_Garamond({ variable: "--font-serif", subsets: ["latin"], display: "swap" });
 
 export const viewport: Viewport = {
-  width: "device-width", initialScale: 1, maximumScale: 1, userScalable: false, themeColor: "#FFFAF0",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  /** Lets Safari iOS status / toolbar show through instead of tinting maroon or cream */
+  themeColor: "transparent",
 };
 
 export const metadata: Metadata = {
@@ -33,7 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${greatVibes.variable} ${cormorant.variable} antialiased`}
-        style={{ fontFamily: "var(--font-serif), Georgia, serif", background: "#FFFAF0", overflow: "hidden" }}>
+        style={{ fontFamily: "var(--font-serif), Georgia, serif", overflow: "hidden" }}>
         {children}
       </body>
     </html>

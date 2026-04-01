@@ -69,7 +69,7 @@ export default function EventDetails({ visible }: EventDetailsProps) {
 
   return (
     <div
-      className="fixed inset-0 scroll-y no-scroll"
+      className="fixed safe-area-screen scroll-y no-scroll"
       style={{
         backgroundColor: '#FFFAF0',
         zIndex: 45,

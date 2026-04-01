@@ -246,7 +246,7 @@ export default function ScratchCard({ visible, onComplete }: ScratchCardProps) {
   const sz = Math.min(100, (typeof window !== 'undefined' ? window.innerWidth : 390) / 3.8);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center no-scroll" style={{ backgroundColor: '#FFFAF0', zIndex: 45 }}>
+    <div className="fixed safe-area-screen flex flex-col items-center justify-center no-scroll" style={{ backgroundColor: '#FFFAF0', zIndex: 45 }}>
       <div className={`text-center mb-10 transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <h2 className="text-shimmer" style={{ fontFamily: 'var(--font-script)', fontSize: '42px', marginBottom: '8px' }}>Reveal</h2>
         <p style={{ fontFamily: 'var(--font-serif)', fontSize: '11px', color: '#8B7355', letterSpacing: '0.2em', textTransform: 'uppercase' }}>

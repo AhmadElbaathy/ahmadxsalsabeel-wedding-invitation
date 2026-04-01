@@ -28,7 +28,7 @@ export default function NameReveal({ visible, onContinue }: NameRevealProps) {
 
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center cursor-pointer no-scroll"
+      className="fixed safe-area-screen flex flex-col items-center justify-center cursor-pointer no-scroll"
       style={{
         backgroundColor: '#FFFAF0',
         zIndex: 45,

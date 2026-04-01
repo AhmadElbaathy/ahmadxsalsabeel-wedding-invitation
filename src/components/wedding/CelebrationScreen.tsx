@@ -137,7 +137,7 @@ export default function CelebrationScreen({ visible, onComplete }: CelebrationSc
 
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center"
+      className="fixed safe-area-screen flex flex-col items-center justify-center"
       style={{
         backgroundColor: '#FFFAF0',
         zIndex: 45,

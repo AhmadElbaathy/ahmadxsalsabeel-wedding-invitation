@@ -203,7 +203,7 @@ export default function CurtainAnimation({ isOpen, onComplete, onFadingStart, ch
   }, [isOpen]);
 
   return (
-    <div className="fixed inset-0" style={{ zIndex: 40, overflow: 'visible' }}>
+    <div className="fixed safe-area-screen" style={{ zIndex: 40, overflow: 'visible' }}>
       {/* Layer 1: invitation cream — always under stack; stops red bleed through semi-transparent / edge keyed pixels */}
       <div
         className="absolute inset-0"
