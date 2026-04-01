@@ -11,7 +11,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  /** Matches welcome screen; SafariThemeColor (client) switches to transparent after “tap to open” */
+  /** Matches welcome; client switches meta + edge strips to cream #FFFAF0 after “tap to open” */
   themeColor: "#5A1010",
 };
 
