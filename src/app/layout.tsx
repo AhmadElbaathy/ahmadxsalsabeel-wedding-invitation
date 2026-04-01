@@ -11,11 +11,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  /** Per-scheme tags — some iOS versions only honor the light-scheme meta */
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "transparent" },
-    { media: "(prefers-color-scheme: dark)", color: "transparent" },
-  ],
+  /** Matches welcome screen; SafariThemeColor (client) switches to transparent after “tap to open” */
+  themeColor: "#5A1010",
 };
 
 export const metadata: Metadata = {

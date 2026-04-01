@@ -7,6 +7,7 @@ import ScratchCard from '@/components/wedding/ScratchCard';
 import CelebrationScreen from '@/components/wedding/CelebrationScreen';
 import EventDetails from '@/components/wedding/EventDetails';
 import FloatingPetals from '@/components/wedding/FloatingPetals';
+import SafariThemeColor from '@/components/wedding/SafariThemeColor';
 
 /** Must match `--music-btn-gold-start-delay` + `--music-btn-gold-reveal-duration` in globals.css (ms). */
 const MUSIC_BTN_GOLD_DELAY_MS = 1350;
@@ -31,6 +32,9 @@ export default function Home() {
   const [speakerIconDarkAfterCurtain, setSpeakerIconDarkAfterCurtain] = useState(false);
   /** Unmute from mute → gold with no start-delay; curtain path stays delayed until user mutes. */
   const [metalInstantReveal, setMetalInstantReveal] = useState(false);
+  /** Keeps welcome mounted while it fades so curtain can run underneath */
+  const [welcomeMounted, setWelcomeMounted] = useState(true);
+  const [welcomeExiting, setWelcomeExiting] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const toggleMusic = useCallback((e?: React.MouseEvent) => {
@@ -86,6 +90,8 @@ export default function Home() {
     setMusicPlaying(true);
     startMusic();
     setStage(1);
+    setWelcomeExiting(true);
+    window.setTimeout(() => setWelcomeMounted(false), 560);
   }, [startMusic]);
 
   const handleCurtainFadingStart = useCallback(() => {
@@ -148,6 +154,7 @@ export default function Home() {
 
   return (
     <main className="no-scroll">
+      <SafariThemeColor stage={stage} />
       <audio ref={audioRef} src="/bgm.mp3" loop preload="auto" playsInline />
       <FloatingPetals active={stage === 4} />
 
@@ -274,8 +281,8 @@ export default function Home() {
       </CurtainAnimation>
       )}
 
-      {/* Welcome — on top, instantly removed on tap */}
-      {stage === 0 && <WelcomeScreen onTap={handleWelcomeTap} />}
+      {/* Welcome — fades out after tap while curtain (z-40) plays underneath */}
+      {welcomeMounted && <WelcomeScreen exiting={welcomeExiting} onTap={handleWelcomeTap} />}
 
       {watermarkUnlocked && (
         <a

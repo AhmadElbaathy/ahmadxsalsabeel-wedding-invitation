@@ -10,7 +10,14 @@ interface Sparkle {
   size: number;
 }
 
-export default function WelcomeScreen({ onTap }: { onTap: () => void }) {
+export default function WelcomeScreen({
+  onTap,
+  exiting = false,
+}: {
+  onTap: () => void;
+  /** True after tap — fades out so curtain can show underneath */
+  exiting?: boolean;
+}) {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [showContent, setShowContent] = useState(false);
 
@@ -31,7 +38,12 @@ export default function WelcomeScreen({ onTap }: { onTap: () => void }) {
   return (
     <div
       className="fixed safe-area-screen z-50 flex flex-col items-center justify-center cursor-pointer"
-      style={{ backgroundColor: '#5A1010' }}
+      style={{
+        backgroundColor: '#5A1010',
+        opacity: exiting ? 0 : 1,
+        transition: 'opacity 0.55s ease',
+        pointerEvents: exiting ? 'none' : 'auto',
+      }}
       onClick={onTap}
     >
       {/* Subtle pattern overlay */}
