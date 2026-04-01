@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Great_Vibes, Cormorant_Garamond } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const greatVibes = Great_Vibes({ weight: "400", variable: "--font-script", subsets: ["latin"], display: "swap" });
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         style={{ fontFamily: "var(--font-serif), Georgia, serif", overflow: "hidden" }}>
         {/* Cream lives only here — html/body stay transparent so iOS chrome isn’t filled by our background */}
         <div className="app-cream-shell">{children}</div>
+        <Analytics />
       </body>
     </html>
   );
