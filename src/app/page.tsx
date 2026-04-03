@@ -155,7 +155,16 @@ export default function Home() {
   return (
     <main className="no-scroll">
       <SafariThemeColor stage={stage} />
-      <audio ref={audioRef} src="/bgm.mp3" loop preload="auto" playsInline />
+      <audio
+        ref={audioRef}
+        src="/bgm.mp3"
+        preload="auto"
+        playsInline
+        onEnded={() => {
+          setMusicPlaying(false);
+          setMusicMuted(false);
+        }}
+      />
       <FloatingPetals active={stage === 4} />
 
       {stage > 0 && musicPlaying && (
