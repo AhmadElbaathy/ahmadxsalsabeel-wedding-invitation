@@ -137,6 +137,38 @@ body {
   bottom: calc(18px + env(safe-area-inset-bottom, 0px));
 }
 
+/*
+ * Safari 26+ (iOS): toolbar / tab bar tint uses fixed elements within ~4px of top or ~3px of bottom
+ * (meta theme-color is unreliable). Strips are pointer-events none + mostly off-screen; phone only.
+ */
+.safari-ios-tint-strip {
+  display: none;
+  position: fixed;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 12px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.safari-ios-tint-strip--top {
+  top: 0;
+}
+
+.safari-ios-tint-strip--bottom {
+  bottom: -8px;
+}
+
+@supports (-webkit-text-size-adjust: none) and (font: -apple-system-body) and (-webkit-touch-callout: none) {
+  @media (max-width: 767.98px) {
+    .safari-ios-tint-strip {
+      display: block;
+    }
+  }
+}
+
 /* Wedding custom animations */
 
 @keyframes curtain-open-left {
